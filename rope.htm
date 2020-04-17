@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html >
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+	<title>THE ROPE</title>
+	<style>
+	*{box-sizing:border-box;}
+	body{
+	background-color: rgb(32, 100, 102);}
+	.pole{
+	width:5%;
+
+	border:none;
+	position:absolute;
+	background-color:burlywood;
+	height:22em;}
+	
+	.left{
+	top:19.5%;
+			background:linear-gradient(rgba(204, 133, 20, 0.829) 20%,rgba(118, 165, 42, 0.616) 50%);
+
+	left:20%;
+	}
+	.scene{
+	position:relative;
+	width:100%;
+	border:none;
+	height:30em;
+	margin:auto;
+	background-color: rgba(41, 173, 212, 0.4);
+	}
+	.poles{
+		position:absolute;
+		background:transparent;
+		width:100%;
+		border:none;
+		height:30em;
+		margin:auto;
+	}
+	.right{
+		top:19.5%;
+		background:linear-gradient(rgba(204, 133, 20, 0.829) 20%,rgba(118, 165, 42, 0.616) 50%);
+		left:85%;
+		}
+		.fa{
+		width:5px;
+		top:76%;
+		left:50%;
+		
+		height: 10%;
+		position: absolute;
+		background-color: silver;
+		}
+		.header{
+		text-align: center;
+		font-family:Arial, Helvetica, sans-serif;
+		color:#fff;
+		}
+		.explanation{
+		padding:1em 1em;
+		color: #111;
+		position: absolute;
+		top:95%;
+		font-family: Arial, Helvetica, sans-serif;
+		left:0;
+		font-size:1.5em;
+		}
+		.instructions{
+		position: absolute;
+		font-weight: 700;
+		left:0;
+		transition:all 0.5s ease-out;
+		width:20%;
+		top:0;
+		margin-top: 10em;
+			color:red;
+			font-family: Arial, Helvetica, sans-serif;
+		font-size:1.5em;}
+		  
+		
+	
+		
+.slider {
+	-webkit-appearance: none;
+	width: 100%;
+	height: 25px;
+	background: #d3d3d3;
+	outline: none;
+	opacity: 0.7;
+	-webkit-transition: .2s;
+	transition: opacity .2s;
+  }
+  
+  .slider:hover {
+	opacity: 1;
+  }
+		.slider::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 35px;
+			border-radius: 100px;
+			height: 35px;
+			background: #4CAF50;
+			cursor: pointer;
+		  }
+		  
+		  .slider::-moz-range-thumb {
+			width: 25px;
+			height: 25px;
+			background: #4CAF50;
+			cursor: pointer;
+		  }
+	
+	</style>
+</head>
+<body><div class='poles'>
+<h1 class='header'> THE ROPE THINGY VISUALIZATION</h1>
+	<div class='pole left'></div>
+	<div class='pole right'></div>
+
+<p class='explanation'>
+	<input class='slider' id='slider' type="range" min="1" max="70" value="0">
+The rope is 12O M long,the poles are 70M in height, Assuming the rope is originally completely horizontal and not stretched downwards,for the rope and the ground to be 10m apart, the rope needs to sretch down 60m, 
+,when it stretches 60M down,each half of the rope extends downwards 60 M,theres no more rope to stretch horizontally.&#127770;</p>
+<span class='instructions'>Scroll if you have a mouse or just use the slider below   <span/>
+
+</div>
+
+<canvas id='canvas' class='scene'>
+	
+<canvas/>
+
+
+
+
+
+
+
+
+
+<script>
+var hide=document.getElementsByClassName('instructions')[0];
+var slider=document.getElementById('slider');
+
+	var canv=document.getElementById('canvas');
+	var ctx=canv.getContext('2d');
+	var ruler=document.getElementsByClassName('fa')[0];
+
+	ctx.font="900 10pt 28px arial "
+	ctx.lineWidth=3;
+	
+	
+	var pole=document.getElementsByClassName('pole');
+	var leftpole=pole[0];
+	var pole_length=leftpole.clientHeight;
+	var rightpole=pole[1];
+	var leftpole_pos=[leftpole.offsetTop,leftpole.offsetLeft];
+	var rightpole_pos=[rightpole.offsetTop,rightpole.offsetLeft];
+	console.log('height:',pole_length);
+	
+	var position = $(rightpole).position();
+	
+	var percentLeft = position.left/$(canv).width() * 100;
+	console.log('calculated:',percentLeft)
+	var og_percentage=percentLeft
+	var percentTop = position.top/$(canv).height() *100;
+
+var left_y=30;
+var orig_rx=30;
+var percent_lim=86;
+var ruler=30
+var og_ruler_pos=orig_rx;
+var rope_length=235;
+var u_lim=30+rope_length;
+
+var left_x=75;
+var distance=70
+var right_x=u_lim;
+var right_y=30;
+var prev=0
+
+paintcanvas(right_x)
+
+	if (window.addEventListener) {
+		// IE9, Chrome, Safari, Opera
+		window.addEventListener("mousewheel", MouseWheelHandler, false);
+		// Firefox
+		window.addEventListener("DOMMouseScroll", MouseWheelHandler, false);
+	}
+	// IE 6/7/8
+	else window.attachEvent("onmousewheel", MouseWheelHandler);
+	
+	function MouseWheelHandler(e){
+		hide.style.visibility='hidden';
+
+	
+	
+	if (e){
+		// cross-browser wheel delta
+		var e = window.event || e; // old IE support
+	
+		var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+		 right_x+=delta*3.1;
+		 percentLeft+=delta;
+		 ruler-=delta*1.49 
+		 distance+=delta;}
+if (distance<=10){
+distance=10}	
+if (distance>=70){
+	distance=70}	
+	
+if (ruler>125){
+ruler=125}
+if (ruler<=30){
+	ruler=30}
+		
+if (right_x<=75){
+	
+	right_x=75;};
+	if (right_x>=u_lim){
+	right_x=u_lim;}
+
+paintcanvas(right_x)
+
+}
+slider.oninput =function(){
+	hide.style.visibility='hidden';
+
+let move;
+	var cur=this.value;
+	move=prev-cur;
+	console.log(cur)
+	right_x+=move*3.1;
+	percentLeft+=move;
+	ruler-=move*1.49 
+	distance+=move;
+	prev=cur;
+	console.log('slider val:',prev);
+	MouseWheelHandler()
+	
+	paintcanvas(right_x)
+
+	}
+function paintcanvas(right_x){
+
+let speed=0.9;
+if (percentLeft<=25){
+	percentLeft=25;
+		rightpole.style.left=25+'%';}
+		
+	 else if(percentLeft<=og_percentage){
+	 rightpole.style.left=percentLeft+'%';
+
+	}
+	
+	else{
+	rightpole.style.left=percent_lim+'%';
+	percentLeft=percent_lim
+	}
+	
+	
+	console.log('right_x:',right_x);
+	let mid=((right_x+left_x)/2);
+	let slide=u_lim-right_x;
+	let rope_end=orig_rx+slide;
+	console.log('slider:',slide)
+	
+
+
+ctx.clearRect(0,0,1200,800);
+ctx.strokeStyle='brown';
+ctx.lineWidth=3
+	ctx.beginPath();
+
+	ctx.moveTo(left_x,left_y);
+ctx.quadraticCurveTo(mid,rope_end,right_x,right_y);
+
+ctx.stroke();
+ctx.closePath();
+
+ctx.beginPath();
+ctx.strokeStyle='#000'
+ctx.lineWidth=1;
+ctx.strokeText('Rope',left_x-70,ruler)
+ctx.strokeText('vertical height',left_x-70,ruler+10)
+ctx.strokeText(`${70-distance} M`,left_x-50 ,ruler+20)
+ctx.moveTo(left_x-20,left_y);
+ctx.lineTo(left_x-20,ruler);
+
+ctx.stroke();
+ctx.closePath();
+
+ctx.beginPath();
+ctx.strokeStyle='#000'
+ctx.lineWidth=1;
+ctx.strokeText('Distance',mid*1.1,ruler)
+ctx.strokeText('to ground',mid*1.1,ruler+10)
+ctx.strokeText(`${distance} M`,mid*1.1 ,ruler+20)
+ctx.moveTo(mid,140);
+ctx.lineTo(mid,ruler);
+
+ctx.stroke();
+ctx.closePath();
+
+
+}
+</script>
+</body>
+</html>
